@@ -7,8 +7,8 @@ from django.db.models import Q
 # Create your models here.
 
 class Listing(models.Model):
-    listing_id = models.UUIDField(default=uuid.uuid4(), editable=False, primary_key=True)
-    host = models.ForeignKey(User, related_name="listings")
+    listing_id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, unique=True)
+    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
     name = models.CharField(max_length=250, null=False)
     description = models.TextField(max_length=250, null=False)
     address = models.CharField(max_length=200, null=False)
@@ -21,9 +21,9 @@ class Listing(models.Model):
 
 
 class Review(models.Model):
-    review_id = models.UUIDField(default=uuid.uuid4(), editable=False, primary_key=True)
-    listing = models.ForeignKey(Listing, related_name="reviews", null=False)
-    user = models.ForeignKey(User, related_name="reviews", null=False)
+    review_id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="reviews", null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews", null=False)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)],
                                               null=False)
     
@@ -45,9 +45,9 @@ class Booking(models.Model):
         ("Confirmed", "confirmed"),
         ("Canceled", "canceled")
     )
-    booking_id = models.UUIDField(default=uuid.uuid4(), editable=False, primary_key=True)
-    listing = models.ForeignKey(Listing, related_name="bookings")
-    user = models.ForeignKey(User, related_name="bookings")
+    booking_id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bookings")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
     check_in_date = models.DateField()
     check_out_date = models.DateField()
     total_price = models.DecimalField(max_digits=5, decimal_places=2)
